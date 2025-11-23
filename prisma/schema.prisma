@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model DailyLog {
+  id        String   @id @default(uuid())
+  date      DateTime @unique @default(now())
+  weight    Float?
+  bodyFat   Float?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  workouts WorkoutLog[]
+  meals    FoodLog[]
+}
+
+model Settings {
+  id             String   @id @default(uuid())
+  targetWeight   Float    @default(80)
+  bodyFatGoal    Float    @default(15)
+  calorieGoal    Int      @default(2200)
+  proteinGoal    Int      @default(180)
+  carbGoal       Int      @default(200)
+  fatGoal        Int      @default(60)
+  aiModel        String   @default("openai/gpt-4o-mini")
+  customPrompt   String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model WorkoutLog {
+  id          String   @id @default(uuid())
+  dailyLogId  String
+  type        String   // "A", "B", "C", "Cardio", "Other"
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  dailyLog    DailyLog @relation(fields: [dailyLogId], references: [id], onDelete: Cascade)
+  exercises   ExerciseLog[]
+}
+
+model ExerciseLog {
+  id           String   @id @default(uuid())
+  workoutLogId String
+  name         String
+  sets         Int
+  reps         String   // String to allow ranges like "8-10" or notes
+  weight       Float
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  workoutLog   WorkoutLog @relation(fields: [workoutLogId], references: [id], onDelete: Cascade)
+}
+
+model FoodLog {
+  id          String   @id @default(uuid())
+  dailyLogId  String
+  name        String
+  calories    Int
+  protein     Float
+  carbs       Float
+  fats        Float
+  mealType    String   // "Breakfast", "Lunch", "Dinner", "Snack"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  dailyLog    DailyLog @relation(fields: [dailyLogId], references: [id], onDelete: Cascade)
+}
+
+model FoodPreset {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  calories  Int
+  protein   Float
+  carbs     Float
+  fats      Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
