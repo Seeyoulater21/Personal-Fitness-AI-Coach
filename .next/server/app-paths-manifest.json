@@ -1,6 +1,0 @@
-{
-  "/api/chat/route": "app/api/chat/route.js",
-  "/coach/page": "app/coach/page.js",
-  "/page": "app/page.js",
-  "/workout/page": "app/workout/page.js"
-}
