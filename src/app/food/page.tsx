@@ -1,5 +1,6 @@
 import { getDailyLog, getFoodPresets, getSettings } from "@/app/actions";
 import FoodLogger from "@/components/FoodLogger";
+import FoodChatbot from "@/components/FoodChatbot";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
@@ -27,6 +28,7 @@ export default async function FoodPage() {
                     settings={settings}
                 />
             </div>
+            <FoodChatbot />
         </main>
     );
 }
